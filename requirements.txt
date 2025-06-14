@@ -9,3 +9,4 @@ firebase-functions
 firebase-admin
 gunicorn
 psycopg2-binary
+Pillow
