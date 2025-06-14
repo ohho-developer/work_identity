@@ -1,0 +1,96 @@
+{% extends 'base/base.html' %}
+
+{% block title %}업무 정체성 진단 (WIS){% endblock %}
+
+{% block content %}
+<body>
+
+    
+
+    <!-- Hero 섹션 -->
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4">나의 진짜 <br>업무 스타일 찾기</h1>
+            <p class="lead">40개의 문항을 통해 당신의 업무 정체성을 발견하고,커리어 성장의 새로운 가능성을 열어보세요.</p>
+            <a href="{% url 'diagnosis:survey' %}" class="btn btn-primary btn-custom">무료 진단 시작하기 <i class="bi bi-arrow-right-short"></i></a>
+        </div>
+    </header>
+
+    <!-- 특징 소개 섹션 -->
+    <section id="features" class="section bg-white">
+        <div class="container text-center">
+            <h2 class="mb-5 fw-bold">WIS(Work Identity Spectrum)<br>진단 프로세스</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-card-checklist"></i>
+                    </div>
+                    <h3 class="h4 fw-bold">1. 설문 진행</h3>
+                    <p class="text-muted">총 40개의 A/B 선택형 문항에 응답하여 당신의 고유한 선호도를 파악합니다.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="h4 fw-bold">2. 결과 분석</h3>
+                    <p class="text-muted">4가지 핵심 축을 기준으로 당신의 응답을 분석하여 가장 적합한 업무 유형을 도출합니다.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-file-person"></i>
+                    </div>
+                    <h3 class="h4 fw-bold">3. 유형 확인</h3>
+                    <p class="text-muted">16가지 유형 중 당신에게 해당하는 상세 프로필과 시각화된 리포트를 확인합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 기대 효과 섹션 -->
+    <section id="why" class="section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">무엇을 얻을 수 있을까요?</h2>
+                <p class="text-muted">나와 팀을 더 깊이 이해하고 성장의 기회를 만드세요.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold">자기 이해 증진</h4>
+                            <p class="card-text">나의 강점과 약점, 동기부여 요인을 명확히 이해하고 효과적인 업무 방식을 찾을 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold">팀워크 향상</h4>
+                            <p class="card-text">나와 동료의 다른 업무 스타일을 이해하고, 소통 방식을 개선하여 시너지를 극대화할 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold">커리어 설계</h4>
+                            <p class="card-text">나의 성향에 맞는 업무 환경과 역할을 파악하여, 만족도 높은 커리어 경로를 설계할 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 마지막 CTA 섹션 (버튼의 원래 위치) -->
+    <section id="cta" class="section cta-section text-center">
+        <div class="container">
+            <h2 class="fw-bold">이제, 당신의 차례입니다.</h2>
+            <p class="lead text-muted mb-4">지금 바로 당신의 숨겨진 업무 잠재력을 확인해보세요.</p>
+            <a href="{% url 'diagnosis:survey' %}" class="btn btn-primary btn-custom shadow-lg">내 유형 알아보기 <i class="bi bi-arrow-right-short"></i></a>
+        </div>
+    </section>
+
+
+
+{% endblock %}

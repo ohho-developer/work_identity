@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIS | 당신의 업무 정체성 찾기</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        /* 기본 폰트 및 스타일 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* 섹션별 여백 조정 */
+        .section {
+            padding: 80px 0;
+        }
+
+        /* Hero 섹션 스타일 */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(6, 40, 61, 0.9), rgba(52, 119, 153, 0.8)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section .lead {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        /* 커스텀 버튼 스타일 */
+        .btn-custom {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 특징 섹션 아이콘 스타일 */
+        .feature-icon {
+            font-size: 3rem;
+            color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 카드 스타일 조정 */
+        .card {
+            border: none;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 마지막 CTA 섹션 스타일 복원 */
+        .cta-section {
+            background-color: #e9ecef;
+        }
+
+        /* 푸터 스타일 */
+        footer {
+            background-color: #343a40;
+            color: #adb5bd;
+        }
+
+        /* Prevent word breaks in Hero section titles and leads */
+        p {
+            overflow-wrap: break-word;
+            word-break: keep-all; /* Added keep-all for Korean text */
+        }
+
+    </style>
+    
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'diagnosis:index' %}">
+                <i class="bi bi-person-badge"></i>
+                Work Identity Spectrum
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'diagnosis:index' %}">홈으로</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'diagnosis:survey' %}">진단하기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'diagnosis:contact' %}">문의하기</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+    </div>
+{% endif %}
+
+{% if success_message %}
+    <div class="alert alert-success" role="alert">
+        {{ success_message }}
+    </div>
+{% endif %}
+    <div class="container content">
+        {% block content %}
+        {# 각 페이지의 내용이 여기에 삽입됩니다. #}
+        {% endblock %}
+    </div>
+
+<!-- 푸터 -->
+    <footer class="py-4 text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Work Identity Spectrum(WIS). All Rights Reserved.</p>
+            <p class="mb-0">Designed by <a href="#" class="text-white-50">DesignusPlus</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

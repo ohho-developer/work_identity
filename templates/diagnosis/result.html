@@ -1,0 +1,322 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+    .button-group {
+        display: flex;
+        justify-content: center; /* Center buttons horizontally */
+        align-items: center; /* Vertically center buttons */
+        gap: 10px; /* Add space between buttons */
+        margin-top: 30px; /* Add some space above the button group */
+    }
+</style>
+
+<!-- Action Buttons -->
+<div class="button-group">
+    <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="URL이 복사되었습니다!"><i class="bi bi-share"></i> 결과 공유</button>
+    <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">내 유형은?</a>
+    <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">문의하기</a>
+</div>
+
+    <div class="result-container my-5">
+        <div class="container py-5 text-center">
+            <h3>{{ user_id }}님의 업무 정체성 유형은?</h3>
+            <h1><strong>{{ final_type }}</strong></h1>
+            <h4>{{ type_title }}</h4>
+            <p>({{ type_subtitle }})</p>
+            <p>{{ type_description }}</p>
+            <p><strong>{{type_one_sentence}}</strong></p>
+        </div>
+
+        <!-- Diagnosis Results Visualization Section -->
+ <div class="container mb-5">
+    <div class="axis-container mb-4">
+        <div class="text-center my-3">
+            <h5>업무 실행 방식</h5>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.PI.i_percentage }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ axis_data.PI.i_percentage }}%"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+            <button type="button" class="btn {% if 'P' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="체계적인 계획<br>사전 준비<br>예측 가능성 중시<br>리스크 최소화<br>목표 설정 후 실행">
+ 계획형 (P)
+            </button>
+            <button type="button" class="btn {% if 'I' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="빠른 실행<br>즉각적인 대응<br>변화에 대한 유연성<br>상황 적응력<br>실행하며 계획 수정">
+ 적응형 (I)
+            </button>
+        </div>
+    </div>
+</div>
+ <div class="container mb-5">
+    <div class="axis-container mb-4">
+        <div class="text-center my-3">
+            <h5>의사결정 기준</h5>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.DN.n_percentage }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar text-bg-warning progress-bar-striped progress-bar-animated" style="width: {{ axis_data.DN.n_percentage }}%"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+            <button type="button" class="btn {% if 'D' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="객관적 데이터, 통계,<br> 사실 근거 논리적 분석,<br> 원인과 결과 중시<br>감정 배제, 합리적 판단">
+                데이터 기반 (D)
+            </button>
+            <button type="button" class="btn {% if 'N' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="경험에서 비롯된 직관,<br> 통찰력, 전체적인 맥락,<br> 큰 그림(Big Picture) 파악<br>사람과 상황의 흐름 감지">
+                직관 기반 (N)
+            </button>
+        </div>
+    </div>
+ </div>
+ <div class="container mb-5">
+    <div class="axis-container mb-4">
+        <div class="text-center my-3">
+            <h5>소통 지향성</h5>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.CH.h_percentage }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar text-bg-success progress-bar-striped progress-bar-animated" style="width: {{ axis_data.CH.h_percentage }}%"></div>
+        </div>
+    <div class="d-flex justify-content-between mt-2">
+        <button type="button" class="btn {% if 'C' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="명확한 정보 전달, <br>사실 기반 소통<br>오해 최소화, 핵심 요약<br>객관성과 효율성 추구">
+            명료화형 (C)
+        </button>
+        <button type="button" class="btn {% if 'H' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="관계 중심 소통,<br>긍정적 분위기 조성<br>감정적 교감, 팀의 화합 중시<br>배려와 격려를 통한 협력 유도">
+            조화형 (H)
+        </button>
+    </div>
+ </div>
+</div>
+ <div class="container mb-5">
+ <div class="axis-container mb-5">
+ <div class="text-center my-3">
+ <h5>핵심 업무 동기</h5>
+ </div>
+
+ <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.TR.r_percentage }}" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar text-bg-danger progress-bar-striped progress-bar-animated" style="width: {{ axis_data.TR.r_percentage }}%"></div>
+</div>
+ <div class="d-flex justify-content-between mt-2">
+ <button type="button" class="btn {% if 'T' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="과업 완수, 설정된 목표 달성<br>개인의 역량 성장, 전문성 입증<br>객관적인 성취에서 보람을 느낌">성과 중심 (T)</button>
+ <button type="button" class="btn {% if 'R' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="팀워크, 동료와의 긍정적 유대감<br>타인에 대한 긍정적 영향력, 기여<br>공동의 성공에서 보람을 느낌">관계 중심 (R)</button>
+ </div>
+ </div>
+
+ </div>
+</div>
+        <div class="container mt-5 text-center">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">나의 업무 스타일 프로필<br><br></h4>
+                    <p class="card-text">{{ work_style|linebreaksbr }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">몰입과 성과를 이끄는 업무 조건<br><br></h4>
+                    <p class="card-text">{{ work_condition|linebreaksbr }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">성장을 위한 리스크와 해법<br><br></h4>
+                    <p class="card-text">{{ work_develop|linebreaksbr }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">협업을 위한 커뮤니케이션 가이드<br><br></h4>
+                    <p class="card-text">{{ work_communication|linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Action Buttons -->
+        <div class="button-group my-5">
+            <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="URL이 복사되었습니다!"><i class="bi bi-share"></i> 결과 공유</button>
+            <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">내 유형은?</a>
+            <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">문의하기</a>
+        </div>
+
+    </div>
+
+    
+
+    <!-- Report Request Modal -->
+    <div class="modal fade" id="reportRequestModal" tabindex="-1" aria-labelledby="reportRequestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportRequestModalLabel">상세 결과 리포트 보기</h5>
+                    </div>
+                <div class="modal-body">
+                    <p class="text-center text-muted">이메일을 입력하시면 상세 결과 리포트를 확인하실 수 있습니다.</p>
+                    <div class="mb-3">
+                        <label for="modalResultEmailInput" class="form-label">이메일 주소</label>
+                        <input type="email" class="form-control" id="modalResultEmailInput" placeholder="name@example.com">
+                    </div>
+                    <div class="form-check mb-3 text-start">
+                        <input class="form-check-input" type="checkbox" value="" id="modalResultNewsletterConsent">
+                        <label class="form-check-label" for="modalResultNewsletterConsent">
+                            뉴스레터 수신에 동의합니다.
+                        </label>
+                    </div>
+                    <div id="modalEmailMessage" class="mt-3 text-center" style="display: none;"></div> {# For displaying messages #}
+                </div>
+                <div class="modal-footer">
+                    {# The submit button is moved inside the modal body for better alignment with input fields #}
+                    <button type="button" class="btn btn-primary w-100" id="modalRequestReportBtn">결과 리포트 보기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // 공유 버튼 로직
+        const shareButtons = document.querySelectorAll('.share-button');
+        shareButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const currentUrl = window.location.href;
+                const copyMessage = this.nextElementSibling; // Assuming message span is next
+    
+                navigator.clipboard.writeText(currentUrl)
+                    .then(() => {
+                        if (copyMessage) {
+                            copyMessage.style.display = 'inline';
+                            setTimeout(() => {
+                                copyMessage.style.display = 'none';
+                            }, 2000);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('클립보드 복사 실패:', err);
+                        // Optional: Display an error message to the user
+                    });
+            });
+        });
+    
+        // 부트스트랩 팝오버 초기화
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+    
+        // 주의: '.popover-dismiss' 선택자가 필요한 경우에만 이 코드를 유지하세요.
+        // 현재 HTML에는 해당 클래스가 없으므로 이 줄은 오류의 원인일 수 있습니다.
+        // 필요한 경우, 해당 요소에 클래스를 추가하거나 이 줄을 삭제하세요.
+        // const popover = new bootstrap.Popover('.popover-dismiss', { trigger: 'focus' });
+    
+    
+        // 부트스트랩 툴팁 초기화
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    
+    
+        // Helper function to get CSRF cookie (needed for inquiry email send)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        // Get modal elements and initialize modal if user_id is empty
+        const reportRequestModalElement = document.getElementById('reportRequestModal');
+        const modalEmailInput = document.getElementById('modalResultEmailInput');
+        const modalNewsletterConsent = document.getElementById('modalResultNewsletterConsent');
+        const modalEmailMessageDiv = document.getElementById('modalEmailMessage');
+        const modalRequestReportBtn = document.getElementById('modalRequestReportBtn');
+    
+        if (reportRequestModalElement) {
+             const reportRequestModal = new bootstrap.Modal(reportRequestModalElement);
+             const userId = '{{ user_id|escapejs }}';
+             if (!userId) {
+                 reportRequestModal.show();
+             }
+        }
+    
+    
+        // Event listener for the 'Request Report' button INSIDE THE MODAL
+        if (modalRequestReportBtn) {
+            modalRequestReportBtn.addEventListener('click', async () => {
+                const email = modalEmailInput.value.trim();
+                const newsletterConsent = modalNewsletterConsent.checked;
+    
+                modalEmailMessageDiv.innerText = '';
+                modalEmailMessageDiv.style.display = 'none';
+    
+                if (!email) {
+                    modalEmailMessageDiv.innerText = '이메일 주소를 입력해주세요.';
+                    modalEmailMessageDiv.style.color = 'red';
+                    modalEmailMessageDiv.style.display = 'block';
+                    return;
+                }
+    
+                try {
+                    const resultId = '{{ result_id|escapejs }}';
+                    if (!resultId) {
+                         console.error('result_id is not available in the template context.');
+                         modalEmailMessageDiv.innerText = '리포트 요청 중 오류가 발생했습니다. (결과 ID 누락)';
+                         modalEmailMessageDiv.style.color = 'red';
+                         modalEmailMessageDiv.style.display = 'block';
+                         return;
+                    }
+    
+                    const response = await fetch(`{%url "diagnosis:request_report"%}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({ result_id: resultId, email: email, newsletter_consent: newsletterConsent })
+                    });
+    
+                    const data = await response.json();
+    
+                    modalEmailMessageDiv.innerText = data.message;
+                    modalEmailMessageDiv.style.color = data.status === 'success' ? 'green' : 'red';
+                    modalEmailMessageDiv.style.display = 'block';
+    
+                    if (data.status === 'success') {
+                        if (reportRequestModalElement) {
+                            bootstrap.Modal.getInstance(reportRequestModalElement).hide();
+                        }
+                    }
+    
+                } catch (error) {
+                    console.error('Error requesting report:', error);
+                    modalEmailMessageDiv.innerText = '리포트 요청 중 오류가 발생했습니다.';
+                    modalEmailMessageDiv.style.color = 'red';
+                    modalEmailMessageDiv.style.display = 'block';
+                }
+            });
+        }
+    
+        // Note: axis marker and percentage display logic was removed in the previous step.
+        // If you need this functionality, please provide the updated HTML structure for the axis bars.
+    
+    
+    }); // End of the main DOMContentLoaded listener
+    
+
+
+</script>
+
+    
+{% endblock extra_js %}

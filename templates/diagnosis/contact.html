@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">문의하기</h2>
+    <h5 class="text-center">더 많은 커리어 성장과 </h5>
+    <h5 class="text-center mb-4">팀워크를 원하신다면 연락주세요.</h5>
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label">이메일 주소</label>
+                    <input type="email" class="form-control" id="userEmail" name="user_email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="inquiryContent" class="form-label">문의 내용</label>
+                    <textarea class="form-control" id="inquiryContent" name="inquiry_content" rows="6" required></textarea>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">문의 제출</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
