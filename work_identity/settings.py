@@ -30,7 +30,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*','port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app']  # 실제 배포 시에는 도메인으로 변경해야 합니다
+ALLOWED_HOSTS = ['*','port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app']
+CSRF_TRUSTED_ORIGINS = ['https://port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app']
+
 
 
 # Application definition
