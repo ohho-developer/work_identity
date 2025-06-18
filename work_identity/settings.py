@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*','port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app']
-CSRF_TRUSTED_ORIGINS = ['https://port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app']
+CSRF_TRUSTED_ORIGINS = ['https://port-0-work-identity-mbvo57g1a476113a.sel4.cloudtype.app','workidentity.designusplus.com']
 
 
 
