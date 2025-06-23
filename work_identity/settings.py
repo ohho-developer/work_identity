@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'diagnosis',
+    'modeltranslation',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -131,6 +133,20 @@ USE_I18N = True
 
 USE_TZ = True
 
+# 다국어 지원 설정
+LANGUAGES = [
+    ('ko', '한국어'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Modeltranslation 설정
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ko'
+MODELTRANSLATION_LANGUAGES = ('ko', 'en')
+MODELTRANSLATION_FALLBACK_LANGUAGES = ('ko', 'en')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

@@ -2,24 +2,60 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">문의하기</h2>
-    <h5 class="text-center">더 많은 커리어 성장과 </h5>
-    <h5 class="text-center mb-4">팀워크를 원하신다면 연락주세요.</h5>
+    <h2 class="text-center mb-4">
+        {% if current_language == 'en' %}
+            Contact Us
+        {% else %}
+            문의하기
+        {% endif %}
+    </h2>
+    <h5 class="text-center">
+        {% if current_language == 'en' %}
+            If you want more career growth and
+        {% else %}
+            더 많은 커리어 성장과
+        {% endif %}
+    </h5>
+    <h5 class="text-center mb-4">
+        {% if current_language == 'en' %}
+            better teamwork, please contact us.
+        {% else %}
+            팀워크를 원하신다면 연락주세요.
+        {% endif %}
+    </h5>
 
     <div class="row justify-content-center mb-5">
         <div class="col-md-8 col-lg-6">
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="userEmail" class="form-label">이메일 주소</label>
+                    <label for="userEmail" class="form-label">
+                        {% if current_language == 'en' %}
+                            Email Address
+                        {% else %}
+                            이메일 주소
+                        {% endif %}
+                    </label>
                     <input type="email" class="form-control" id="userEmail" name="user_email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="inquiryContent" class="form-label">문의 내용</label>
+                    <label for="inquiryContent" class="form-label">
+                        {% if current_language == 'en' %}
+                            Inquiry Content
+                        {% else %}
+                            문의 내용
+                        {% endif %}
+                    </label>
                     <textarea class="form-control" id="inquiryContent" name="inquiry_content" rows="6" required></textarea>
                 </div>
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">문의 제출</button>
+                    <button type="submit" class="btn btn-primary">
+                        {% if current_language == 'en' %}
+                            Submit Inquiry
+                        {% else %}
+                            문의 제출
+                        {% endif %}
+                    </button>
                 </div>
             </form>
         </div>

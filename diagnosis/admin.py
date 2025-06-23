@@ -6,11 +6,33 @@ from datetime import datetime
 
 # Axis ModelAdmin
 class AxisAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'description')
+    list_display = ('code', 'name', 'name_en', 'description', 'description_en')
+    fieldsets = (
+        ('기본 정보', {
+            'fields': ('code',)
+        }),
+        ('한국어', {
+            'fields': ('name', 'description', 'work_style', 'work_condition', 'work_develop', 'work_communication')
+        }),
+        ('English', {
+            'fields': ('name_en', 'description_en', 'work_style_en', 'work_condition_en', 'work_develop_en', 'work_communication_en')
+        }),
+    )
 
 # Question ModelAdmin
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'option_a', 'option_b')
+    list_display = ('text', 'text_en', 'option_a', 'option_a_en', 'option_b', 'option_b_en')
+    fieldsets = (
+        ('한국어', {
+            'fields': ('text', 'option_a', 'option_b')
+        }),
+        ('English', {
+            'fields': ('text_en', 'option_a_en', 'option_b_en')
+        }),
+        ('옵션 값', {
+            'fields': ('option_a_value', 'option_b_value')
+        }),
+    )
 
 
 # Result ModelAdmin

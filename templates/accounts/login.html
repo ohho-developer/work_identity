@@ -1,29 +1,65 @@
 {% extends 'base/base.html' %}
 
-{% block title %}로그인 - Work Identity{% endblock %}
+{% block title %}
+    {% if current_language == 'en' %}
+        Login - Work Identity
+    {% else %}
+        로그인 - Work Identity
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h2 class="card-title text-center mb-4">로그인</h2>
+                <h2 class="card-title text-center mb-4">
+                    {% if current_language == 'en' %}
+                        Login
+                    {% else %}
+                        로그인
+                    {% endif %}
+                </h2>
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="username" class="form-label">아이디</label>
+                        <label for="username" class="form-label">
+                            {% if current_language == 'en' %}
+                                Username
+                            {% else %}
+                                아이디
+                            {% endif %}
+                        </label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">비밀번호</label>
+                        <label for="password" class="form-label">
+                            {% if current_language == 'en' %}
+                                Password
+                            {% else %}
+                                비밀번호
+                            {% endif %}
+                        </label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">로그인</button>
+                        <button type="submit" class="btn btn-primary">
+                            {% if current_language == 'en' %}
+                                Login
+                            {% else %}
+                                로그인
+                            {% endif %}
+                        </button>
                     </div>
                 </form>
                 <div class="text-center mt-3">
-                    <p class="mb-0">계정이 없으신가요? <a href="{% url 'register' %}">회원가입</a></p>
+                    <p class="mb-0">
+                        {% if current_language == 'en' %}
+                            Don't have an account? <a href="{% url 'register' %}">Register</a>
+                        {% else %}
+                            계정이 없으신가요? <a href="{% url 'register' %}">회원가입</a>
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

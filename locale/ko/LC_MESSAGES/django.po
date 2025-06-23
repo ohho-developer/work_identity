@@ -1,0 +1,165 @@
+# Korean translations for work_identity project.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the work_identity project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: work_identity\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/base/base.html:15
+msgid "Home"
+msgstr "홈"
+
+#: templates/base/base.html:16
+msgid "About"
+msgstr "소개"
+
+#: templates/base/base.html:17
+msgid "Contact"
+msgstr "연락처"
+
+#: templates/base/base.html:18
+msgid "Diagnosis"
+msgstr "진단"
+
+#: templates/base/base.html:25
+msgid "Login"
+msgstr "로그인"
+
+#: templates/base/base.html:26
+msgid "Register"
+msgstr "회원가입"
+
+#: templates/base/base.html:30
+msgid "Profile"
+msgstr "프로필"
+
+#: templates/base/base.html:31
+msgid "Logout"
+msgstr "로그아웃"
+
+#: templates/diagnosis/home.html:10
+msgid "Work Identity Diagnosis"
+msgstr "워크 아이덴티티 진단"
+
+#: templates/diagnosis/home.html:11
+msgid "Discover your work personality type"
+msgstr "당신의 업무 성향을 알아보세요"
+
+#: templates/diagnosis/home.html:12
+msgid "Start Diagnosis"
+msgstr "진단 시작하기"
+
+#: templates/diagnosis/result.html:15
+msgid "Your Work Identity Type"
+msgstr "당신의 워크 아이덴티티 유형"
+
+#: templates/diagnosis/result.html:20
+msgid "Description"
+msgstr "설명"
+
+#: templates/diagnosis/result.html:25
+msgid "Characteristics"
+msgstr "특징"
+
+#: templates/diagnosis/result.html:30
+msgid "Recommended Work Environment"
+msgstr "추천 업무 환경"
+
+#: templates/diagnosis/result.html:35
+msgid "Save Result"
+msgstr "결과 저장"
+
+#: templates/diagnosis/result.html:40
+msgid "Share Result"
+msgstr "결과 공유"
+
+#: templates/accounts/login.html:10
+msgid "Login"
+msgstr "로그인"
+
+#: templates/accounts/login.html:15
+msgid "Email"
+msgstr "이메일"
+
+#: templates/accounts/login.html:20
+msgid "Password"
+msgstr "비밀번호"
+
+#: templates/accounts/login.html:25
+msgid "Remember me"
+msgstr "로그인 상태 유지"
+
+#: templates/accounts/login.html:30
+msgid "Forgot Password?"
+msgstr "비밀번호를 잊으셨나요?"
+
+#: templates/accounts/register.html:10
+msgid "Register"
+msgstr "회원가입"
+
+#: templates/accounts/register.html:15
+msgid "Email"
+msgstr "이메일"
+
+#: templates/accounts/register.html:20
+msgid "Password"
+msgstr "비밀번호"
+
+#: templates/accounts/register.html:25
+msgid "Confirm Password"
+msgstr "비밀번호 확인"
+
+#: templates/accounts/register.html:30
+msgid "Register"
+msgstr "가입하기"
+
+#: templates/accounts/profile.html:10
+msgid "Profile"
+msgstr "프로필"
+
+#: templates/accounts/profile.html:15
+msgid "Update Profile"
+msgstr "프로필 업데이트"
+
+#: templates/accounts/profile.html:20
+msgid "Email"
+msgstr "이메일"
+
+#: templates/accounts/profile.html:25
+msgid "First Name"
+msgstr "이름"
+
+#: templates/accounts/profile.html:30
+msgid "Last Name"
+msgstr "성"
+
+#: templates/accounts/profile.html:35
+msgid "Profile Picture"
+msgstr "프로필 사진"
+
+#: templates/accounts/profile.html:40
+msgid "Save Changes"
+msgstr "변경사항 저장"
+
+#: main/views.py:50
+msgid "Language"
+msgstr "언어"
+
+#: main/views.py:55
+msgid "Korean"
+msgstr "한국어"
+
+#: main/views.py:60
+msgid "English"
+msgstr "영어" 

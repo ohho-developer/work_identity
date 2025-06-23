@@ -10,3 +10,5 @@ firebase-admin
 gunicorn
 psycopg2-binary
 Pillow
+pycountry
+django-modeltranslation

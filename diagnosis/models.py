@@ -16,9 +16,6 @@ class Axis(models.Model):
     def __str__(self):
         return f"{self.code} - {self.name}"
 
-
-
-
 class Question(models.Model):
     """Defines a single survey question."""
     # ForeignKey to the Axis model

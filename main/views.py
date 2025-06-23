@@ -4,11 +4,75 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm
+from django.http import HttpResponse
+from django.utils import translation
+from django.conf import settings
+from .utils import detect_user_language, set_language, get_language_name
+from django.utils.translation import gettext as _
 
 # Create your views here.
 
+def set_language_view(request):
+    """
+    언어 전환을 위한 뷰
+    """
+    if request.method == 'POST':
+        language_code = request.POST.get('language')
+        if language_code in [lang[0] for lang in settings.LANGUAGES]:
+            set_language(request, language_code)
+            # 현재 페이지로 리다이렉트
+            next_url = request.POST.get('next', '/')
+            response = redirect(next_url)
+            response.set_cookie('django_language', language_code)
+            return response
+    
+    return redirect('/')
+
 def home(request):
-    return render(request, 'base/home.html')
+    """
+    홈페이지 뷰 - 언어 감지 기능 포함
+    """
+    # 사용자 언어 감지
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
+    context = {
+        'current_language': user_language,
+        'available_languages': settings.LANGUAGES,
+        'language_name': get_language_name(user_language),
+    }
+    
+    return render(request, 'main/home.html', context)
+
+def about(request):
+    """
+    소개 페이지 뷰
+    """
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
+    context = {
+        'current_language': user_language,
+        'available_languages': settings.LANGUAGES,
+        'language_name': get_language_name(user_language),
+    }
+    
+    return render(request, 'main/about.html', context)
+
+def contact(request):
+    """
+    연락처 페이지 뷰
+    """
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
+    context = {
+        'current_language': user_language,
+        'available_languages': settings.LANGUAGES,
+        'language_name': get_language_name(user_language),
+    }
+    
+    return render(request, 'main/contact.html', context)
 
 def login_view(request):
     if request.method == 'POST':

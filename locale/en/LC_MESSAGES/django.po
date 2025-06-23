@@ -1,0 +1,165 @@
+# English translations for work_identity project.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the work_identity project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: work_identity\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/base/base.html:15
+msgid "Home"
+msgstr "Home"
+
+#: templates/base/base.html:16
+msgid "About"
+msgstr "About"
+
+#: templates/base/base.html:17
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/base/base.html:18
+msgid "Diagnosis"
+msgstr "Diagnosis"
+
+#: templates/base/base.html:25
+msgid "Login"
+msgstr "Login"
+
+#: templates/base/base.html:26
+msgid "Register"
+msgstr "Register"
+
+#: templates/base/base.html:30
+msgid "Profile"
+msgstr "Profile"
+
+#: templates/base/base.html:31
+msgid "Logout"
+msgstr "Logout"
+
+#: templates/diagnosis/home.html:10
+msgid "Work Identity Diagnosis"
+msgstr "Work Identity Diagnosis"
+
+#: templates/diagnosis/home.html:11
+msgid "Discover your work personality type"
+msgstr "Discover your work personality type"
+
+#: templates/diagnosis/home.html:12
+msgid "Start Diagnosis"
+msgstr "Start Diagnosis"
+
+#: templates/diagnosis/result.html:15
+msgid "Your Work Identity Type"
+msgstr "Your Work Identity Type"
+
+#: templates/diagnosis/result.html:20
+msgid "Description"
+msgstr "Description"
+
+#: templates/diagnosis/result.html:25
+msgid "Characteristics"
+msgstr "Characteristics"
+
+#: templates/diagnosis/result.html:30
+msgid "Recommended Work Environment"
+msgstr "Recommended Work Environment"
+
+#: templates/diagnosis/result.html:35
+msgid "Save Result"
+msgstr "Save Result"
+
+#: templates/diagnosis/result.html:40
+msgid "Share Result"
+msgstr "Share Result"
+
+#: templates/accounts/login.html:10
+msgid "Login"
+msgstr "Login"
+
+#: templates/accounts/login.html:15
+msgid "Email"
+msgstr "Email"
+
+#: templates/accounts/login.html:20
+msgid "Password"
+msgstr "Password"
+
+#: templates/accounts/login.html:25
+msgid "Remember me"
+msgstr "Remember me"
+
+#: templates/accounts/login.html:30
+msgid "Forgot Password?"
+msgstr "Forgot Password?"
+
+#: templates/accounts/register.html:10
+msgid "Register"
+msgstr "Register"
+
+#: templates/accounts/register.html:15
+msgid "Email"
+msgstr "Email"
+
+#: templates/accounts/register.html:20
+msgid "Password"
+msgstr "Password"
+
+#: templates/accounts/register.html:25
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+#: templates/accounts/register.html:30
+msgid "Register"
+msgstr "Register"
+
+#: templates/accounts/profile.html:10
+msgid "Profile"
+msgstr "Profile"
+
+#: templates/accounts/profile.html:15
+msgid "Update Profile"
+msgstr "Update Profile"
+
+#: templates/accounts/profile.html:20
+msgid "Email"
+msgstr "Email"
+
+#: templates/accounts/profile.html:25
+msgid "First Name"
+msgstr "First Name"
+
+#: templates/accounts/profile.html:30
+msgid "Last Name"
+msgstr "Last Name"
+
+#: templates/accounts/profile.html:35
+msgid "Profile Picture"
+msgstr "Profile Picture"
+
+#: templates/accounts/profile.html:40
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: main/views.py:50
+msgid "Language"
+msgstr "Language"
+
+#: main/views.py:55
+msgid "Korean"
+msgstr "Korean"
+
+#: main/views.py:60
+msgid "English"
+msgstr "English" 

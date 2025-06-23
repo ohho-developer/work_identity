@@ -13,14 +13,39 @@
 
 <!-- Action Buttons -->
 <div class="button-group">
-    <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="URL이 복사되었습니다!"><i class="bi bi-share"></i> 결과 공유</button>
-    <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">내 유형은?</a>
-    <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">문의하기</a>
+    <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="{% if current_language == 'en' %}URL copied!{% else %}URL이 복사되었습니다!{% endif %}">
+        <i class="bi bi-share"></i> 
+        {% if current_language == 'en' %}
+            Share Result
+        {% else %}
+            결과 공유
+        {% endif %}
+    </button>
+    <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">
+        {% if current_language == 'en' %}
+            What's My Type?
+        {% else %}
+            내 유형은?
+        {% endif %}
+    </a>
+    <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">
+        {% if current_language == 'en' %}
+            Contact
+        {% else %}
+            문의하기
+        {% endif %}
+    </a>
 </div>
 
     <div class="result-container my-5">
         <div class="container py-5 text-center">
-            <h3>{{ user_id }}님의 업무 정체성 유형은?</h3>
+            <h3>
+                {% if current_language == 'en' %}
+                    {{ user_id }}'s Work Identity Type is?
+                {% else %}
+                    {{ user_id }}님의 업무 정체성 유형은?
+                {% endif %}
+            </h3>
             <h1><strong>{{ final_type }}</strong></h1>
             <h4>{{ type_title }}</h4>
             <p>({{ type_subtitle }})</p>
@@ -32,17 +57,31 @@
  <div class="container mb-5">
     <div class="axis-container mb-4">
         <div class="text-center my-3">
-            <h5>업무 실행 방식</h5>
+            <h5>
+                {% if current_language == 'en' %}
+                    Work Execution Style
+                {% else %}
+                    업무 실행 방식
+                {% endif %}
+            </h5>
         </div>
         <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.PI.i_percentage }}" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ axis_data.PI.i_percentage }}%"></div>
         </div>
         <div class="d-flex justify-content-between mt-2">
-            <button type="button" class="btn {% if 'P' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="체계적인 계획<br>사전 준비<br>예측 가능성 중시<br>리스크 최소화<br>목표 설정 후 실행">
- 계획형 (P)
+            <button type="button" class="btn {% if 'P' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Systematic planning<br>Prior preparation<br>Predictability focus<br>Risk minimization<br>Goal setting then execution{% else %}체계적인 계획<br>사전 준비<br>예측 가능성 중시<br>리스크 최소화<br>목표 설정 후 실행{% endif %}">
+                {% if current_language == 'en' %}
+                    Planner (P)
+                {% else %}
+                    계획형 (P)
+                {% endif %}
             </button>
-            <button type="button" class="btn {% if 'I' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="빠른 실행<br>즉각적인 대응<br>변화에 대한 유연성<br>상황 적응력<br>실행하며 계획 수정">
- 적응형 (I)
+            <button type="button" class="btn {% if 'I' in final_type %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Quick execution<br>Immediate response<br>Flexibility to change<br>Situation adaptability<br>Plan modification during execution{% else %}빠른 실행<br>즉각적인 대응<br>변화에 대한 유연성<br>상황 적응력<br>실행하며 계획 수정{% endif %}">
+                {% if current_language == 'en' %}
+                    Adaptive (I)
+                {% else %}
+                    적응형 (I)
+                {% endif %}
             </button>
         </div>
     </div>
@@ -50,17 +89,31 @@
  <div class="container mb-5">
     <div class="axis-container mb-4">
         <div class="text-center my-3">
-            <h5>의사결정 기준</h5>
+            <h5>
+                {% if current_language == 'en' %}
+                    Decision Making Criteria
+                {% else %}
+                    의사결정 기준
+                {% endif %}
+            </h5>
         </div>
         <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.DN.n_percentage }}" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar text-bg-warning progress-bar-striped progress-bar-animated" style="width: {{ axis_data.DN.n_percentage }}%"></div>
         </div>
         <div class="d-flex justify-content-between mt-2">
-            <button type="button" class="btn {% if 'D' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="객관적 데이터, 통계,<br> 사실 근거 논리적 분석,<br> 원인과 결과 중시<br>감정 배제, 합리적 판단">
-                데이터 기반 (D)
+            <button type="button" class="btn {% if 'D' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Objective data, statistics,<br>fact-based logical analysis,<br>cause and effect focus<br>Emotion exclusion, rational judgment{% else %}객관적 데이터, 통계,<br> 사실 근거 논리적 분석,<br> 원인과 결과 중시<br>감정 배제, 합리적 판단{% endif %}">
+                {% if current_language == 'en' %}
+                    Data-driven (D)
+                {% else %}
+                    데이터 기반 (D)
+                {% endif %}
             </button>
-            <button type="button" class="btn {% if 'N' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="경험에서 비롯된 직관,<br> 통찰력, 전체적인 맥락,<br> 큰 그림(Big Picture) 파악<br>사람과 상황의 흐름 감지">
-                직관 기반 (N)
+            <button type="button" class="btn {% if 'N' in final_type %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Experience-based intuition,<br>insight, overall context,<br>big picture understanding<br>People and situation flow detection{% else %}경험에서 비롯된 직관,<br> 통찰력, 전체적인 맥락,<br> 큰 그림(Big Picture) 파악<br>사람과 상황의 흐름 감지{% endif %}">
+                {% if current_language == 'en' %}
+                    Intuitive (N)
+                {% else %}
+                    직관 기반 (N)
+                {% endif %}
             </button>
         </div>
     </div>
@@ -68,17 +121,31 @@
  <div class="container mb-5">
     <div class="axis-container mb-4">
         <div class="text-center my-3">
-            <h5>소통 지향성</h5>
+            <h5>
+                {% if current_language == 'en' %}
+                    Communication Orientation
+                {% else %}
+                    소통 지향성
+                {% endif %}
+            </h5>
         </div>
         <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.CH.h_percentage }}" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar text-bg-success progress-bar-striped progress-bar-animated" style="width: {{ axis_data.CH.h_percentage }}%"></div>
         </div>
     <div class="d-flex justify-content-between mt-2">
-        <button type="button" class="btn {% if 'C' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="명확한 정보 전달, <br>사실 기반 소통<br>오해 최소화, 핵심 요약<br>객관성과 효율성 추구">
-            명료화형 (C)
+        <button type="button" class="btn {% if 'C' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Clear information delivery,<br>fact-based communication<br>Misunderstanding minimization, key summary<br>Objectivity and efficiency pursuit{% else %}명확한 정보 전달, <br>사실 기반 소통<br>오해 최소화, 핵심 요약<br>객관성과 효율성 추구{% endif %}">
+            {% if current_language == 'en' %}
+                Clarifier (C)
+            {% else %}
+                명료화형 (C)
+            {% endif %}
         </button>
-        <button type="button" class="btn {% if 'H' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="관계 중심 소통,<br>긍정적 분위기 조성<br>감정적 교감, 팀의 화합 중시<br>배려와 격려를 통한 협력 유도">
-            조화형 (H)
+        <button type="button" class="btn {% if 'H' in final_type %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Relationship-centered communication,<br>positive atmosphere creation<br>Emotional empathy, team harmony focus<br>Cooperation through care and encouragement{% else %}관계 중심 소통,<br>긍정적 분위기 조성<br>감정적 교감, 팀의 화합 중시<br>배려와 격려를 통한 협력 유도{% endif %}">
+            {% if current_language == 'en' %}
+                Harmonizer (H)
+            {% else %}
+                조화형 (H)
+            {% endif %}
         </button>
     </div>
  </div>
@@ -86,15 +153,33 @@
  <div class="container mb-5">
  <div class="axis-container mb-5">
  <div class="text-center my-3">
- <h5>핵심 업무 동기</h5>
+ <h5>
+     {% if current_language == 'en' %}
+         Core Work Motivation
+     {% else %}
+         핵심 업무 동기
+     {% endif %}
+ </h5>
  </div>
 
  <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ axis_data.TR.r_percentage }}" aria-valuemin="0" aria-valuemax="100">
     <div class="progress-bar text-bg-danger progress-bar-striped progress-bar-animated" style="width: {{ axis_data.TR.r_percentage }}%"></div>
 </div>
  <div class="d-flex justify-content-between mt-2">
- <button type="button" class="btn {% if 'T' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="과업 완수, 설정된 목표 달성<br>개인의 역량 성장, 전문성 입증<br>객관적인 성취에서 보람을 느낌">성과 중심 (T)</button>
- <button type="button" class="btn {% if 'R' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="팀워크, 동료와의 긍정적 유대감<br>타인에 대한 긍정적 영향력, 기여<br>공동의 성공에서 보람을 느낌">관계 중심 (R)</button>
+ <button type="button" class="btn {% if 'T' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Task completion, set goal achievement<br>Individual capability growth, expertise proof<br>Satisfaction from objective achievement{% else %}과업 완수, 설정된 목표 달성<br>개인의 역량 성장, 전문성 입증<br>객관적인 성취에서 보람을 느낌{% endif %}">
+     {% if current_language == 'en' %}
+         Task-focused (T)
+     {% else %}
+         성과 중심 (T)
+     {% endif %}
+ </button>
+ <button type="button" class="btn {% if 'R' in final_type %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-html="true" data-bs-content="{% if current_language == 'en' %}Teamwork, positive bonds with colleagues<br>Positive influence on others, contribution<br>Satisfaction from shared success{% else %}팀워크, 동료와의 긍정적 유대감<br>타인에 대한 긍정적 영향력, 기여<br>공동의 성공에서 보람을 느낌{% endif %}">
+     {% if current_language == 'en' %}
+         Relationship-focused (R)
+     {% else %}
+         관계 중심 (R)
+     {% endif %}
+ </button>
  </div>
  </div>
 
@@ -103,70 +188,137 @@
         <div class="container mt-5 text-center">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h4 class="card-title">나의 업무 스타일 프로필<br><br></h4>
+                    <h4 class="card-title">
+                        {% if current_language == 'en' %}
+                            My Work Style Profile<br><br>
+                        {% else %}
+                            나의 업무 스타일 프로필<br><br>
+                        {% endif %}
+                    </h4>
                     <p class="card-text">{{ work_style|linebreaksbr }}</p>
                 </div>
             </div>
 
             <div class="card mb-4">
                 <div class="card-body">
-                    <h4 class="card-title">몰입과 성과를 이끄는 업무 조건<br><br></h4>
+                    <h4 class="card-title">
+                        {% if current_language == 'en' %}
+                            Work Conditions for Focus and Performance<br><br>
+                        {% else %}
+                            몰입과 성과를 이끄는 업무 조건<br><br>
+                        {% endif %}
+                    </h4>
                     <p class="card-text">{{ work_condition|linebreaksbr }}</p>
                 </div>
             </div>
 
             <div class="card mb-4">
                 <div class="card-body">
-                    <h4 class="card-title">성장을 위한 리스크와 해법<br><br></h4>
+                    <h4 class="card-title">
+                        {% if current_language == 'en' %}
+                            Risks and Solutions for Growth<br><br>
+                        {% else %}
+                            성장을 위한 리스크와 해법<br><br>
+                        {% endif %}
+                    </h4>
                     <p class="card-text">{{ work_develop|linebreaksbr }}</p>
                 </div>
             </div>
 
             <div class="card mb-4">
                 <div class="card-body">
-                    <h4 class="card-title">협업을 위한 커뮤니케이션 가이드<br><br></h4>
+                    <h4 class="card-title">
+                        {% if current_language == 'en' %}
+                            Communication Guide for Collaboration<br><br>
+                        {% else %}
+                            협업을 위한 커뮤니케이션 가이드<br><br>
+                        {% endif %}
+                    </h4>
                     <p class="card-text">{{ work_communication|linebreaksbr }}</p>
                 </div>
             </div>
         </div>
 
-
-
         <!-- Action Buttons -->
         <div class="button-group my-5">
-            <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="URL이 복사되었습니다!"><i class="bi bi-share"></i> 결과 공유</button>
-            <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">내 유형은?</a>
-            <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">문의하기</a>
+            <button type="button" class="btn btn-outline-primary share-button" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-content="{% if current_language == 'en' %}URL copied!{% else %}URL이 복사되었습니다!{% endif %}">
+                <i class="bi bi-share"></i> 
+                {% if current_language == 'en' %}
+                    Share Result
+                {% else %}
+                    결과 공유
+                {% endif %}
+            </button>
+            <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">
+                {% if current_language == 'en' %}
+                    What's My Type?
+                {% else %}
+                    내 유형은?
+                {% endif %}
+            </a>
+            <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">
+                {% if current_language == 'en' %}
+                    Contact
+                {% else %}
+                    문의하기
+                {% endif %}
+            </a>
         </div>
 
     </div>
-
-    
 
     <!-- Report Request Modal -->
     <div class="modal fade" id="reportRequestModal" tabindex="-1" aria-labelledby="reportRequestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="reportRequestModalLabel">상세 결과 리포트 보기</h5>
+                    <h5 class="modal-title" id="reportRequestModalLabel">
+                        {% if current_language == 'en' %}
+                            View Detailed Result Report
+                        {% else %}
+                            상세 결과 리포트 보기
+                        {% endif %}
+                    </h5>
                     </div>
                 <div class="modal-body">
-                    <p class="text-center text-muted">이메일을 입력하시면 상세 결과 리포트를 확인하실 수 있습니다.</p>
+                    <p class="text-center text-muted">
+                        {% if current_language == 'en' %}
+                            Enter your email to view the detailed result report.
+                        {% else %}
+                            이메일을 입력하시면 상세 결과 리포트를 확인하실 수 있습니다.
+                        {% endif %}
+                    </p>
                     <div class="mb-3">
-                        <label for="modalResultEmailInput" class="form-label">이메일 주소</label>
+                        <label for="modalResultEmailInput" class="form-label">
+                            {% if current_language == 'en' %}
+                                Email Address
+                            {% else %}
+                                이메일 주소
+                            {% endif %}
+                        </label>
                         <input type="email" class="form-control" id="modalResultEmailInput" placeholder="name@example.com">
                     </div>
                     <div class="form-check mb-3 text-start">
                         <input class="form-check-input" type="checkbox" value="" id="modalResultNewsletterConsent">
                         <label class="form-check-label" for="modalResultNewsletterConsent">
-                            뉴스레터 수신에 동의합니다.
+                            {% if current_language == 'en' %}
+                                I agree to receive newsletters.
+                            {% else %}
+                                뉴스레터 수신에 동의합니다.
+                            {% endif %}
                         </label>
                     </div>
                     <div id="modalEmailMessage" class="mt-3 text-center" style="display: none;"></div> {# For displaying messages #}
                 </div>
                 <div class="modal-footer">
                     {# The submit button is moved inside the modal body for better alignment with input fields #}
-                    <button type="button" class="btn btn-primary w-100" id="modalRequestReportBtn">결과 리포트 보기</button>
+                    <button type="button" class="btn btn-primary w-100" id="modalRequestReportBtn">
+                        {% if current_language == 'en' %}
+                            View Result Report
+                        {% else %}
+                            결과 리포트 보기
+                        {% endif %}
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,10 +1,17 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{ current_language|default:'ko' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIS | 당신의 업무 정체성 찾기</title>
+    <title>
+        {% if current_language == 'en' %}
+            WIS | Find Your Work Identity
+        {% else %}
+            WIS | 당신의 업무 정체성 찾기
+        {% endif %}
+    </title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
@@ -106,6 +113,25 @@
             word-break: keep-all; /* Added keep-all for Korean text */
         }
 
+        /* 언어 선택 드롭다운 스타일 */
+        .language-dropdown {
+            min-width: 120px;
+        }
+
+        .language-dropdown .dropdown-item {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .language-dropdown .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .current-language {
+            font-weight: 500;
+            color: #0d6efd;
+        }
+
     </style>
     
 
@@ -117,37 +143,95 @@
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'diagnosis:index' %}">
                 <i class="bi bi-person-badge"></i>
-                Work Identity Spectrum
+                {% if current_language == 'en' %}
+                    Work Identity Spectrum
+                {% else %}
+                    Work Identity Spectrum
+                {% endif %}
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'diagnosis:index' %}">홈으로</a>
+                        <a class="nav-link active" href="{% url 'diagnosis:index' %}">
+                            {% if current_language == 'en' %}
+                                Home
+                            {% else %}
+                                홈으로
+                            {% endif %}
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'diagnosis:survey' %}">진단하기</a>
+                        <a class="nav-link active" href="{% url 'diagnosis:survey' %}">
+                            {% if current_language == 'en' %}
+                                Diagnosis
+                            {% else %}
+                                진단하기
+                            {% endif %}
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'diagnosis:contact' %}">문의하기</a>
+                        <a class="nav-link active" href="{% url 'diagnosis:contact' %}">
+                            {% if current_language == 'en' %}
+                                Contact
+                            {% else %}
+                                문의하기
+                            {% endif %}
+                        </a>
                     </li>
                 </ul>
+                
+                <!-- 언어 선택 드롭다운 -->
+                <div class="dropdown language-dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-globe"></i>
+                        {% if current_language == 'en' %}
+                            English
+                        {% else %}
+                            한국어
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li>
+                            <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="ko">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="dropdown-item {% if current_language == 'ko' %}current-language{% endif %}">
+                                    한국어
+                                </button>
+                            </form>
+                        </li>
+                        <li>
+                            <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="en">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="dropdown-item {% if current_language == 'en' %}current-language{% endif %}">
+                                    English
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
+    
     {% if error_message %}
     <div class="alert alert-danger" role="alert">
         {{ error_message }}
     </div>
-{% endif %}
+    {% endif %}
 
-{% if success_message %}
+    {% if success_message %}
     <div class="alert alert-success" role="alert">
         {{ success_message }}
     </div>
-{% endif %}
+    {% endif %}
+    
     <div class="container content">
         {% block content %}
         {# 각 페이지의 내용이 여기에 삽입됩니다. #}
@@ -163,7 +247,6 @@
     </footer>
 
     <!-- Bootstrap 5 JS Bundle -->
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     {% block extra_js %}{% endblock %}
 </body>

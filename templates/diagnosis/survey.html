@@ -123,8 +123,20 @@
 {% block content %}
 <div class="survey-wrapper">
     <div class="survey-card">
-        <h2 class="mb-2 fw-bold">업무 정체성 진단</h2>
-        <p class="text-muted mb-4">자신에 대해 가장 잘 설명한다고 생각되는 선택지를 골라주세요.</p>
+        <h2 class="mb-2 fw-bold">
+            {% if current_language == 'en' %}
+                Work Identity Diagnosis
+            {% else %}
+                업무 정체성 진단
+            {% endif %}
+        </h2>
+        <p class="text-muted mb-4">
+            {% if current_language == 'en' %}
+                Please choose the option that best describes yourself.
+            {% else %}
+                자신에 대해 가장 잘 설명한다고 생각되는 선택지를 골라주세요.
+            {% endif %}
+        </p>
         
         <!-- Progress Bar -->
         <div class="progress" role="progressbar" aria-label="Survey Progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
@@ -149,8 +161,20 @@
 
             <!-- End of Survey Message -->
             <div id="survey-complete-message" class="text-center" style="display: none;">
-                <h4 class="fw-bold">진단 완료!</h4>
-                <p>결과를 분석하는 중입니다. 잠시만 기다려주세요.</p>
+                <h4 class="fw-bold">
+                    {% if current_language == 'en' %}
+                        Diagnosis Complete!
+                    {% else %}
+                        진단 완료!
+                    {% endif %}
+                </h4>
+                <p>
+                    {% if current_language == 'en' %}
+                        Analyzing your results. Please wait a moment.
+                    {% else %}
+                        결과를 분석하는 중입니다. 잠시만 기다려주세요.
+                    {% endif %}
+                </p>
                 <div class="spinner-border text-primary mt-3" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -159,14 +183,13 @@
     </div>
 </div>
 
-
-
 <script>
     // Ensure the DOM is fully loaded before running the script
     document.addEventListener('DOMContentLoaded', function() {
         let currentQuestionIndex = 0;
         const userResponses = {};
         const totalQuestions = {{ questions|length }};
+        const currentLanguage = '{{ current_language }}';
     
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
@@ -221,7 +244,11 @@
             // Only submit the survey when all questions have been answered
             if (currentQuestionIndex === totalQuestions) {
                 // Display loading message while submitting
-                document.querySelector('.survey-card').innerHTML = '<div class="text-center"><h4 class="fw-bold">최종 리포트를 생성하고 있습니다.</h4><div class="spinner-border text-primary mt-3" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                const loadingMessage = currentLanguage === 'en' 
+                    ? '<div class="text-center"><h4 class="fw-bold">Generating final report.</h4><div class="spinner-border text-primary mt-3" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+                    : '<div class="text-center"><h4 class="fw-bold">최종 리포트를 생성하고 있습니다.</h4><div class="spinner-border text-primary mt-3" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                
+                document.querySelector('.survey-card').innerHTML = loadingMessage;
 
                 fetch("{% url 'diagnosis:submit_survey' %}", {
                     method: 'POST',
@@ -250,13 +277,19 @@
                     } else {
                         // Handle cases where backend returns status: 'error' with a message
                         console.error('Backend reported an error:', data.message);
-                        alert('결과 제출 중 오류가 발생했습니다: ' + data.message);
+                        const errorMessage = currentLanguage === 'en' 
+                            ? 'An error occurred while submitting results: ' + data.message
+                            : '결과 제출 중 오류가 발생했습니다: ' + data.message;
+                        alert(errorMessage);
                     }
                 })
                 .catch(error => { // Handle network errors or errors thrown from response.text()
                     console.error('Error submitting survey:', error);
                     // Display a user-friendly error message
-                    alert('결과 제출 중 네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+                    const networkErrorMessage = currentLanguage === 'en'
+                        ? 'A network error occurred while submitting results. Please try again.'
+                        : '결과 제출 중 네트워크 오류가 발생했습니다. 다시 시도해주세요.';
+                    alert(networkErrorMessage);
                 });
             }
         }

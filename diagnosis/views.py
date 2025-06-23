@@ -15,6 +15,9 @@ from django.contrib.auth.decorators import login_required
 # Model imports
 from .models import Question, Result, Axis
 
+# Language detection imports
+from main.utils import detect_user_language, set_language, get_language_name
+
 # Firebase related imports and initialization removed as Firebase is not used.
 print("Firebase is not configured or used in this application.")
 
@@ -23,12 +26,25 @@ db = None # Ensure db is None
 
 def index(request):
     """Renders the landing page."""
+    # 사용자 언어 감지
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
+    context = {
+        'current_language': user_language,
+        'language_name': get_language_name(user_language),
+    }
+    
     # Use render to display the index.html template
-    return render(request, 'diagnosis/home.html')
+    return render(request, 'diagnosis/home.html', context)
 
 
 def survey(request):
     """Retrieves questions and returns survey data as JSON."""
+    # 사용자 언어 감지
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
     # Fetch questions and select related axis for efficiency using Django ORM
     questions = list(Question.objects.all())
     random.shuffle(questions) # Shuffle questions
@@ -57,12 +73,16 @@ def survey(request):
         for axis in Axis.objects.all()
     ]
 
+    context = {
+        'questions': questions_data, # Send questions_data directly
+        'axes': axes_data,         # Send axes_data directly
+        'current_language': user_language,
+        'language_name': get_language_name(user_language),
+    }
+
     # Return data as JSON response
     # The frontend JavaScript will fetch this data and populate the survey page
-    return render(request, 'diagnosis/survey.html', {
- 'questions': questions_data, # Send questions_data directly
- 'axes': axes_data,         # Send axes_data directly
-    })
+    return render(request, 'diagnosis/survey.html', context)
 
 
 
@@ -159,6 +179,15 @@ def submit_survey(request):
 
 def contact_view(request):
     """Handles contact form submission and renders the contact page."""
+    # 사용자 언어 감지
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
+    context = {
+        'current_language': user_language,
+        'language_name': get_language_name(user_language),
+    }
+    
     if request.method == 'POST':
         user_email = request.POST.get('user_email', '')
         inquiry_content = request.POST.get('inquiry_content', '')
@@ -166,17 +195,22 @@ def contact_view(request):
         # Basic validation
         if not user_email or not inquiry_content:
             # Render contact page with an error message
-            return render(request, 'diagnosis/contact.html', {
-                'error_message': '이메일 주소와 문의 내용을 모두 입력해주세요.',
+            error_message = '이메일 주소와 문의 내용을 모두 입력해주세요.' if user_language == 'ko' else 'Please enter both email address and inquiry content.'
+            context.update({
+                'error_message': error_message,
                 'user_email': user_email,
                 'inquiry_content': inquiry_content
             })
+            return render(request, 'diagnosis/contact.html', context)
 
         # Define email parameters (similar to send_inquiry_email)
-        subject = '[업무 정체성 진단] 문의 접수'
+        subject = '[업무 정체성 진단] 문의 접수' if user_language == 'ko' else '[Work Identity Diagnosis] Inquiry Received'
         message = f'''보낸 사람: {user_email}
 
                         문의 내용:
+                        {inquiry_content}''' if user_language == 'ko' else f'''From: {user_email}
+
+                        Inquiry Content:
                         {inquiry_content}'''
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = ['info@designusplus.com']
@@ -190,20 +224,30 @@ def contact_view(request):
                 fail_silently=False,
             )
             # Render contact page with a success message
-            return render(request, 'diagnosis/contact.html', {'success_message': '문의 메일이 성공적으로 발송되었습니다.'})
+            success_message = '문의 메일이 성공적으로 발송되었습니다.' if user_language == 'ko' else 'Inquiry email has been sent successfully.'
+            context['success_message'] = success_message
+            return render(request, 'diagnosis/contact.html', context)
 
         except Exception as e:
             print(f"Error sending contact email: {e}")
             # Render contact page with an error message
-            return render(request, 'diagnosis/contact.html', {
-                'error_message': '문의 메일 발송에 실패했습니다.',
-                'user_email': user_email, 'inquiry_content': inquiry_content})
+            error_message = '문의 메일 발송에 실패했습니다.' if user_language == 'ko' else 'Failed to send inquiry email.'
+            context.update({
+                'error_message': error_message,
+                'user_email': user_email, 
+                'inquiry_content': inquiry_content
+            })
+            return render(request, 'diagnosis/contact.html', context)
 
     else: # Handle GET requests
-        return render(request, 'diagnosis/contact.html')
+        return render(request, 'diagnosis/contact.html', context)
 
 def result(request, result_id):
     """Fetches result from Django DB and renders the result page."""
+    # 사용자 언어 감지
+    user_language = detect_user_language(request)
+    set_language(request, user_language)
+    
     # This view now handles displaying the result and the email input form.
     # Firebase is not used, so only fetch from Django DB.
 
@@ -239,12 +283,20 @@ def result(request, result_id):
         # Fetch Axis names and details for chart labels from Django Model
 
         # Define axis labels for the chart
-        axis_labels = {
-            'PI': {'left': '적응형', 'right': '계획형'},
-            'DN': {'left': '데이터 기반', 'right': '직관 기반'},
-            'CH': {'left': '명료화형', 'right': '조화형'},
-            'TR': {'left': '성과 중심', 'right': '관계 중심'},
-        }
+        if user_language == 'en':
+            axis_labels = {
+                'PI': {'left': 'Adaptive', 'right': 'Planner'},
+                'DN': {'left': 'Data-driven', 'right': 'Intuitive'},
+                'CH': {'left': 'Clarifier', 'right': 'Harmonizer'},
+                'TR': {'left': 'Task-focused', 'right': 'Relationship-focused'},
+            }
+        else:
+            axis_labels = {
+                'PI': {'left': '적응형', 'right': '계획형'},
+                'DN': {'left': '데이터 기반', 'right': '직관 기반'},
+                'CH': {'left': '명료화형', 'right': '조화형'},
+                'TR': {'left': '성과 중심', 'right': '관계 중심'},
+            }
         axis_data = {}
 
         # Work Process (P vs I)
@@ -252,7 +304,7 @@ def result(request, result_id):
         i_score = scores.get('I', 0)
         total_pi = p_score + i_score
         p_percentage = (p_score / total_pi) * 100 if total_pi > 0 else 50
-        dominant_pi_type = '계획형' if p_score >= i_score else '적응형'
+        dominant_pi_type = '계획형' if p_score >= i_score else '적응형' if user_language == 'ko' else 'Planner' if p_score >= i_score else 'Adaptive'
         dominant_pi_percentage = p_percentage if p_score >= i_score else 100 - p_percentage
         axis_data['PI'] = {'dominant_type': dominant_pi_type, 'percentage': round(dominant_pi_percentage), 'i_percentage': 100-round(p_percentage)}
 
@@ -261,7 +313,7 @@ def result(request, result_id):
         n_score = scores.get('N', 0)
         total_dn = d_score + n_score
         d_percentage = (d_score / total_dn) * 100 if total_dn > 0 else 50
-        dominant_dn_type = '데이터 기반' if d_score >= n_score else '직관 기반'
+        dominant_dn_type = '데이터 기반' if d_score >= n_score else '직관 기반' if user_language == 'ko' else 'Data-driven' if d_score >= n_score else 'Intuitive'
         dominant_dn_percentage = d_percentage if d_score >= n_score else 100 - d_percentage
         axis_data['DN'] = {'dominant_type': dominant_dn_type, 'percentage': round(dominant_dn_percentage), 'n_percentage': 100-round(d_percentage)}
 
@@ -270,7 +322,7 @@ def result(request, result_id):
         h_score = scores.get('H', 0)
         total_ch = c_score + h_score
         c_percentage = (c_score / total_ch) * 100 if total_ch > 0 else 50
-        dominant_ch_type = '명료화형' if c_score >= h_score else '조화형'
+        dominant_ch_type = '명료화형' if c_score >= h_score else '조화형' if user_language == 'ko' else 'Clarifier' if c_score >= h_score else 'Harmonizer'
         dominant_ch_percentage = c_percentage if c_score >= h_score else 100 - c_percentage
         axis_data['CH'] = {'dominant_type': dominant_ch_type, 'percentage': round(dominant_ch_percentage), 'h_percentage': 100-round(c_percentage)}
 
@@ -279,7 +331,7 @@ def result(request, result_id):
         r_score = scores.get('R', 0)
         total_tr = t_score + r_score
         t_percentage = (t_score / total_tr) * 100 if total_tr > 0 else 50
-        dominant_tr_type = '성과 중심' if t_score >= r_score else '관계 중심'
+        dominant_tr_type = '성과 중심' if t_score >= r_score else '관계 중심' if user_language == 'ko' else 'Task-focused' if t_score >= r_score else 'Relationship-focused'
         dominant_tr_percentage = t_percentage if t_score >= r_score else 100 - t_percentage
         axis_data['TR'] = {'dominant_type': dominant_tr_type, 'percentage': round(dominant_tr_percentage), 'r_percentage': 100-round(t_percentage)}
 
@@ -301,7 +353,9 @@ def result(request, result_id):
             'work_condition': work_condition, # Add work_condition
             'work_develop': work_develop, # Add work_develop
             'work_communication': work_communication, # Add work_communication
-            'axis_data':axis_data
+            'axis_data':axis_data,
+            'current_language': user_language,
+            'language_name': get_language_name(user_language),
         }
 
         # Render the result template with the context data
@@ -310,13 +364,23 @@ def result(request, result_id):
     except ValueError:
          # Handle case where the result_id from the URL is not a valid UUID format
          print(f"Invalid UUID format for result_id: {result_id}")
-         return render(request, 'diagnosis/404.html', {'message': 'Result not found or invalid format.'}, status=404)
+         message = 'Result not found or invalid format.' if user_language == 'en' else '결과를 찾을 수 없거나 형식이 잘못되었습니다.'
+         return render(request, 'diagnosis/404.html', {
+             'message': message,
+             'current_language': user_language,
+             'language_name': get_language_name(user_language),
+         }, status=404)
 
     except Exception as e:
         # Catch any other unexpected errors during the view execution
         print(f"Error in result view for ID {result_id}: {e}")
         # In production, log the error properly
-        return render(request, 'diagnosis/error.html', {'message': 'An internal server error occurred while fetching the result.'}, status=500)
+        message = 'An internal server error occurred while fetching the result.' if user_language == 'en' else '결과를 가져오는 중 내부 서버 오류가 발생했습니다.'
+        return render(request, 'diagnosis/error.html', {
+            'message': message,
+            'current_language': user_language,
+            'language_name': get_language_name(user_language),
+        }, status=500)
 
 @require_POST
 def request_report(request):
