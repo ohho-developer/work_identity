@@ -272,10 +272,10 @@ def result(request, result_id):
         # --- Result type title and description ---
         # Use the linked Axis object to get title and description
         # Access the linked Axis model through the final_type_axis foreign key
-        type_title = django_result.final_type_axis.name.split('(')[0] # Use axis name
-        type_subtitle = django_result.final_type_axis.name.split('(')[1].split(')')[0] # Use axis code for subtitle
-        type_description = django_result.final_type_axis.description.split('한마디로')[0] # Use the description from the Axis model
-        type_one_sentence = django_result.final_type_axis.description.split('"')[1].split('"')[0]
+        type_title = django_result.final_type_axis.name #.split('(')[0] # Use axis name
+        # type_subtitle = django_result.final_type_axis.name.split('(')[1].split(')')[0] # Use axis code for subtitle
+        type_description = django_result.final_type_axis.description  #.split('한마디로')[0] # Use the description from the Axis model
+        # type_one_sentence = django_result.final_type_axis.description.split('"')[1].split('"')[0]
         work_style = django_result.final_type_axis.work_style
         work_condition = django_result.final_type_axis.work_condition
         work_develop = django_result.final_type_axis.work_develop
@@ -343,9 +343,9 @@ def result(request, result_id):
             'result_id': result_id,
             'final_type': final_type, # Passed to template
             'type_title': type_title, # Passed to template (from ResultTypeInfo or placeholder)
-            'type_subtitle': type_subtitle, # Passed to template
+            # 'type_subtitle': type_subtitle, # Passed to template
             'type_description': type_description, # Passed to template (from ResultTypeInfo or placeholder)
-            'type_one_sentence' : type_one_sentence,
+            # 'type_one_sentence' : type_one_sentence,
             'scores': scores, # Pass raw scores as JSON string
             'axis_labels': json.dumps(axis_labels), # Pass chart labels as JSON string
             'user_id': user_id, # Pass the extracted user ID
