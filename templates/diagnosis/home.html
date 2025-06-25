@@ -28,7 +28,7 @@
                     40개의 문항을 통해 당신의 업무 정체성을 발견하고,커리어 성장의 새로운 가능성을 열어보세요.
                 {% endif %}
             </p>
-            <a href="{% url 'diagnosis:survey' %}" class="btn btn-primary btn-custom">
+            <a href="{% url 'diagnosis:survey_start' %}" class="btn btn-primary btn-custom">
                 {% if current_language == 'en' %}
                     Start Free Diagnosis <i class="bi bi-arrow-right-short"></i>
                 {% else %}
@@ -211,7 +211,7 @@
                     지금 바로 당신의 숨겨진 업무 잠재력을 확인해보세요.
                 {% endif %}
             </p>
-            <a href="{% url 'diagnosis:survey' %}" class="btn btn-primary btn-custom shadow-lg">
+            <a href="{% url 'diagnosis:survey_start' %}" class="btn btn-primary btn-custom shadow-lg">
                 {% if current_language == 'en' %}
                     Discover My Type <i class="bi bi-arrow-right-short"></i>
                 {% else %}

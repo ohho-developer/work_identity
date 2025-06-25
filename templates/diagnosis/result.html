@@ -21,13 +21,6 @@
             결과 공유
         {% endif %}
     </button>
-    <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">
-        {% if current_language == 'en' %}
-            What's My Type?
-        {% else %}
-            내 유형은?
-        {% endif %}
-    </a>
     <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">
         {% if current_language == 'en' %}
             Contact
@@ -35,15 +28,28 @@
             문의하기
         {% endif %}
     </a>
+    <a href="{% url 'diagnosis:retry_survey' result.id %}" class="btn btn-danger">
+        {% if current_language == 'en' %}
+            Retake Survey
+        {% else %}
+            다시 검사하기
+        {% endif %}
+    </a>
 </div>
 
+{% if no_result %}
+<div class="container py-5 text-center">
+    <h3>아직 설문 결과가 없습니다.</h3>
+    <p>설문을 완료한 후 결과를 확인할 수 있습니다.</p>
+</div>
+{% else %}
     <div class="result-container my-5">
         <div class="container py-5 text-center">
             <h3>
                 {% if current_language == 'en' %}
-                    {{ user_id }}'s Work Identity Type is?
+                    My Work Identity Type is?
                 {% else %}
-                    {{ user_id }}님의 업무 정체성 유형은?
+                    나의 업무 정체성 유형은?
                 {% endif %}
             </h3>
             <h1><strong>{{ final_type|linebreaksbr }}</strong></h1>
@@ -247,13 +253,6 @@
                     결과 공유
                 {% endif %}
             </button>
-            <a href="{% url 'diagnosis:index' %}" class="btn btn-primary">
-                {% if current_language == 'en' %}
-                    What's My Type?
-                {% else %}
-                    내 유형은?
-                {% endif %}
-            </a>
             <a href="{% url 'diagnosis:contact' %}" class="btn btn-secondary">
                 {% if current_language == 'en' %}
                     Contact
@@ -261,66 +260,17 @@
                     문의하기
                 {% endif %}
             </a>
+            <a href="{% url 'diagnosis:retry_survey' result.id %}" class="btn btn-danger">
+                {% if current_language == 'en' %}
+                    Retake Survey
+                {% else %}
+                    다시 검사하기
+                {% endif %}
+            </a>
         </div>
 
     </div>
-
-    <!-- Report Request Modal -->
-    <div class="modal fade" id="reportRequestModal" tabindex="-1" aria-labelledby="reportRequestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reportRequestModalLabel">
-                        {% if current_language == 'en' %}
-                            View Detailed Result Report
-                        {% else %}
-                            상세 결과 리포트 보기
-                        {% endif %}
-                    </h5>
-                    </div>
-                <div class="modal-body">
-                    <p class="text-center text-muted">
-                        {% if current_language == 'en' %}
-                            Enter your email to view the detailed result report.
-                        {% else %}
-                            이메일을 입력하시면 상세 결과 리포트를 확인하실 수 있습니다.
-                        {% endif %}
-                    </p>
-                    <div class="mb-3">
-                        <label for="modalResultEmailInput" class="form-label">
-                            {% if current_language == 'en' %}
-                                Email Address
-                            {% else %}
-                                이메일 주소
-                            {% endif %}
-                        </label>
-                        <input type="email" class="form-control" id="modalResultEmailInput" placeholder="name@example.com">
-                    </div>
-                    <div class="form-check mb-3 text-start">
-                        <input class="form-check-input" type="checkbox" value="" id="modalResultNewsletterConsent">
-                        <label class="form-check-label" for="modalResultNewsletterConsent">
-                            {% if current_language == 'en' %}
-                                I agree to receive newsletters.
-                            {% else %}
-                                뉴스레터 수신에 동의합니다.
-                            {% endif %}
-                        </label>
-                    </div>
-                    <div id="modalEmailMessage" class="mt-3 text-center" style="display: none;"></div> {# For displaying messages #}
-                </div>
-                <div class="modal-footer">
-                    {# The submit button is moved inside the modal body for better alignment with input fields #}
-                    <button type="button" class="btn btn-primary w-100" id="modalRequestReportBtn">
-                        {% if current_language == 'en' %}
-                            View Result Report
-                        {% else %}
-                            결과 리포트 보기
-                        {% endif %}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% endif %}
 
 {% endblock content %}
 

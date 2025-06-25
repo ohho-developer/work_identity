@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">
+            {% if current_language == 'en' %}
+              Start Survey
+            {% else %}
+              설문 시작
+            {% endif %}
+          </h3>
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="email" class="form-label">
+                {% if current_language == 'en' %}
+                  Enter your email
+                {% else %}
+                  이메일을 입력하세요
+                {% endif %}
+              </label>
+              <input type="email" class="form-control" id="email" name="email" required value="{{ request.GET.email|default:'' }}">
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="newsletter_consent" name="newsletter_consent" checked>
+              <label class="form-check-label" for="newsletter_consent">
+                {% if current_language == 'en' %}
+                  I want to receive the newsletter.
+                {% else %}
+                  뉴스레터를 받고 싶어요.
+                {% endif %}
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              {% if current_language == 'en' %}
+                Start
+              {% else %}
+                시작하기
+              {% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -149,7 +149,7 @@
         <div id="question-area">
             {% for question in questions %}
                 <div class="question-slide" id="question-{{ forloop.counter }}" style="display: {% if forloop.first %}block{% else %}none{% endif %};">
-                    <h5 class="question-counter">{{ forloop.counter }} / {{ questions|length }}</h5>
+                    <h5 class="question-counter">{{ forloop.counter }} / {{ questions|length }} {% if current_language == 'en' %}questions{% else %}문항{% endif %}</h5>
                     <p class="question-text mb-4">{{ question.text }}</p>
                     <div class="d-grid gap-2">
                          <!-- data-value에는 P, I, D, N, C, H, T, R 등의 유형 값이 들어갑니다. -->
@@ -190,6 +190,7 @@
         const userResponses = {};
         const totalQuestions = {{ questions|length }};
         const currentLanguage = '{{ current_language }}';
+        const resultId = '{{ result_id }}';
     
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
@@ -258,6 +259,7 @@
                     },
                     body: JSON.stringify({
                         responses: userResponses,
+                        result_id: resultId
                     })
                 })
                 .then(response => {

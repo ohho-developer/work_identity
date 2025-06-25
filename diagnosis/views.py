@@ -39,142 +39,143 @@ def index(request):
     return render(request, 'diagnosis/home.html', context)
 
 
-def survey(request):
-    """Retrieves questions and returns survey data as JSON."""
-    # 사용자 언어 감지
+def survey_start(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        newsletter_consent = request.POST.get('newsletter_consent') == 'on'
+        # 기존 설문 결과가 있으면 해당 UUID로 결과 페이지 이동
+        result = Result.objects.filter(user_email=email).order_by('-created_at').first()
+        if result:
+            return redirect(reverse('diagnosis:result', args=[result.id]))
+        # 없으면 새 설문 생성 후 설문 시작
+        new_result = Result.objects.create(
+            user_email=email,
+            responses_json={},
+            scores_json=None,
+            newsletter_consent=newsletter_consent,
+            final_type_axis=Axis.objects.first()
+        )
+        return redirect(reverse('diagnosis:survey', args=[new_result.id]))
+    # 언어 context 기본값 처리
+    user_language = request.session.get('django_language', 'ko')
+    return render(request, 'diagnosis/survey_start.html', {'current_language': user_language})
+
+
+def survey(request, result_id):
+    result = get_object_or_404(Result, id=result_id)
     user_language = detect_user_language(request)
-    set_language(request, user_language)
-    
-    # Fetch questions and select related axis for efficiency using Django ORM
     questions = list(Question.objects.all())
-    random.shuffle(questions) # Shuffle questions
-    # For temporary testing with 5 questions, you might slice the list here
-    # questions = questions[:5]
-
-    # Prepare questions data as a list of dictionaries
-    questions_data = [
-        {
-            'id': q.id,
-            'text': q.text,
-            'option_a': q.option_a,
-            'option_a_value': q.option_a_value,
-            'option_b': q.option_b,
-            'option_b_value': q.option_b_value,
-        }
-        for q in questions
-    ]
-
-    # Prepare axis information as a list of dictionaries
-    axes_data = [
-        {
-            'code': axis.code,
-            'name': axis.name,
-        }
-        for axis in Axis.objects.all()
-    ]
-
     context = {
-        'questions': questions_data, # Send questions_data directly
-        'axes': axes_data,         # Send axes_data directly
+        'questions': questions,
+        'result_id': result_id,
         'current_language': user_language,
-        'language_name': get_language_name(user_language),
     }
-
-    # Return data as JSON response
-    # The frontend JavaScript will fetch this data and populate the survey page
     return render(request, 'diagnosis/survey.html', context)
-
 
 
 @require_POST
 def submit_survey(request):
-    """Receives survey responses, calculates and saves to Django DB, and redirects to result page."""
-
     try:
         data = json.loads(request.body)
-        responses = data.get('responses', {}) # Should be a dict like {'q_id_1': 'P', 'q_id_2': 'D', ...}
-
-        # Basic validation
-        if not responses: # Only responses are required for initial save
-            return JsonResponse({'status': 'error', 'message': 'No responses received.'}, status=400)
-
-        # Validate response data format: keys are integers, values are single characters
-        valid_response_values = set('PIDNCHTR') # Set of all possible single-character values
+        responses = data.get('responses', {})
+        result_id = data.get('result_id')
+        if not responses or not result_id:
+            return JsonResponse({'status': 'error', 'message': '응답 또는 result_id가 없습니다.'}, status=400)
+        result = get_object_or_404(Result, id=result_id)
+        # 점수 계산 및 저장
+        scores = {'P': 0, 'I': 0, 'D': 0, 'N': 0, 'C': 0, 'H': 0, 'T': 0, 'R': 0}
+        question_ids = [int(q_id) for q_id in responses.keys()]
+        all_questions = Question.objects.in_bulk(question_ids)
         for q_id_str, answer_value in responses.items():
-            try:
-                # Check if key is a valid integer
-                int(q_id_str)
-            except ValueError:
-                return JsonResponse({'status': 'error', 'message': f'Invalid question ID format: {q_id_str}. Question IDs must be integers.'}, status=400)
-            
-            # Check if value is a single character and one of the expected values
-            if not isinstance(answer_value, str) or len(answer_value) != 1 or answer_value not in valid_response_values:
-                return JsonResponse({'status': 'error', 'message': f'Invalid answer value for question ID {q_id_str}: {answer_value}. Answer values must be a single character from {list(valid_response_values)}.'}, status=400)
-
-
-        # --- Save to Django Result Model ---
-        try:
-            # Recalculate scores using validated responses
-            scores = {'P': 0, 'I': 0, 'D': 0, 'N': 0, 'C': 0, 'H': 0, 'T': 0, 'R': 0}
-            question_ids = [int(q_id_str) for q_id_str in responses.keys()] # Use .keys() to iterate over response dictionary keys and convert to int
-            all_questions = Question.objects.in_bulk(question_ids)
-
-            for q_id_str, answer_value in responses.items():
-                q_id = int(q_id_str)
-                question = all_questions.get(q_id)
-                if isinstance(question, Question): # Ensure 'question' is a Question object
-                     valid_values = {question.option_a_value, question.option_b_value}
-                     if answer_value in valid_values:
-                        scores[answer_value] += 1
-            # Recalculate final_type based on recalculated scores as well
-            final_type_to_save = ""
-            final_type_to_save += 'P' if scores.get('P', 0) >= scores.get('I', 0) else 'I'
-            final_type_to_save += 'D' if scores.get('D', 0) >= scores.get('N', 0) else 'N'
-            final_type_to_save += 'C' if scores.get('C', 0) >= scores.get('H', 0) else 'H'
-            final_type_to_save += 'T' if scores.get('T', 0) >= scores.get('R', 0) else 'R'
-
-            # Log the scores dictionary before saving
-            print(f"Scores before saving: {scores}")
-
-            # Prepare scores_json for saving: use None if scores dict is empty, otherwise dump to JSON
-            scores_json_to_save = json.dumps(scores) if scores else None
-
-            # Find the corresponding Axis object
-            axis_object = None # Initialize axis_object to None
-            try:
-                axis_object = Axis.objects.get(code=final_type_to_save)
-            except Axis.DoesNotExist:
-                print(f"Warning: Axis with code {final_type_to_save} not found. Proceeding without assigning final_type_axis.")
-                # axis_object remains None, which is allowed if the foreign key is nullable
-
-            # Create the Result object and get the created instance
-            created_result = Result.objects.create(
-                user_email='', # Email is not collected during initial submission
-                responses_json=responses, # Store raw responses
-                scores_json=scores_json_to_save,
-                newsletter_consent=False, # Initial save sets consent to False
-                final_type_axis=axis_object, # Assign the found Axis object or None
-                # created_at is set automatically
-            )
-            result_id_to_redirect = str(created_result.id)
-
-        except Exception as db_error:
-            print(f"Error saving result to Django DB: {db_error}")
-            # If Django DB save failed, return an error response
-            return JsonResponse({'status': 'error', 'message': 'Failed to save result to the database.'}, status=500)
-
-        # Redirect to the result page if save was successful
-        # Use the UUID of the created Result object for the URL
-        result_url = reverse('diagnosis:result', args=[result_id_to_redirect]) # Use namespace
+            q_id = int(q_id_str)
+            question = all_questions.get(q_id)
+            if question:
+                valid_values = {question.option_a_value, question.option_b_value}
+                if answer_value in valid_values:
+                    scores[answer_value] += 1
+        final_type = ''
+        final_type += 'P' if scores['P'] >= scores['I'] else 'I'
+        final_type += 'D' if scores['D'] >= scores['N'] else 'N'
+        final_type += 'C' if scores['C'] >= scores['H'] else 'H'
+        final_type += 'T' if scores['T'] >= scores['R'] else 'R'
+        axis_object = Axis.objects.filter(code=final_type).first()
+        result.responses_json = responses
+        result.scores_json = json.dumps(scores)
+        result.final_type_axis = axis_object
+        result.save()
+        result_url = reverse('diagnosis:result', args=[result.id])
         return JsonResponse({'status': 'success', 'redirect_url': result_url})
-
-
-    except json.JSONDecodeError:
-        return JsonResponse({'status': 'error', 'message': 'Invalid JSON.'}, status=400)
     except Exception as e:
-        print(f"Error in submit_survey: {e}")
-        # In production, log the error properly
-        return JsonResponse({'status': 'error', 'message': 'An internal server error occurred.'}, status=500)
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+def result(request, result_id):
+    result = get_object_or_404(Result, id=result_id)
+    # 언어 감지
+    user_language = detect_user_language(request)
+    # 결과가 없거나 설문이 끝나지 않은 경우 예외 처리
+    if not result.scores_json or not result.final_type_axis:
+        return render(request, 'diagnosis/result.html', {'result': result, 'no_result': True, 'current_language': user_language})
+
+    scores = result.scores_json if isinstance(result.scores_json, dict) else json.loads(result.scores_json)
+    final_type = result.final_type_axis.code if result.final_type_axis else "Unknown"
+    type_title = result.final_type_axis.name if result.final_type_axis else ""
+    type_description = result.final_type_axis.description if result.final_type_axis else ""
+    work_style = result.final_type_axis.work_style if result.final_type_axis else ""
+    work_condition = result.final_type_axis.work_condition if result.final_type_axis else ""
+    work_develop = result.final_type_axis.work_develop if result.final_type_axis else ""
+    work_communication = result.final_type_axis.work_communication if result.final_type_axis else ""
+
+    # 축별 점수 계산
+    axis_data = {}
+    # PI
+    p_score = scores.get('P', 0)
+    i_score = scores.get('I', 0)
+    total_pi = p_score + i_score
+    p_percentage = (p_score / total_pi) * 100 if total_pi > 0 else 50
+    axis_data['PI'] = {'i_percentage': 100-round(p_percentage)}
+    # DN
+    d_score = scores.get('D', 0)
+    n_score = scores.get('N', 0)
+    total_dn = d_score + n_score
+    d_percentage = (d_score / total_dn) * 100 if total_dn > 0 else 50
+    axis_data['DN'] = {'n_percentage': 100-round(d_percentage)}
+    # CH
+    c_score = scores.get('C', 0)
+    h_score = scores.get('H', 0)
+    total_ch = c_score + h_score
+    c_percentage = (c_score / total_ch) * 100 if total_ch > 0 else 50
+    axis_data['CH'] = {'h_percentage': 100-round(c_percentage)}
+    # TR
+    t_score = scores.get('T', 0)
+    r_score = scores.get('R', 0)
+    total_tr = t_score + r_score
+    t_percentage = (t_score / total_tr) * 100 if total_tr > 0 else 50
+    axis_data['TR'] = {'r_percentage': 100-round(t_percentage)}
+
+    context = {
+        'result': result,
+        'final_type': final_type,
+        'type_title': type_title,
+        'type_description': type_description,
+        'work_style': work_style,
+        'work_condition': work_condition,
+        'work_develop': work_develop,
+        'work_communication': work_communication,
+        'axis_data': axis_data,
+        'no_result': False,
+        'current_language': user_language,
+    }
+    return render(request, 'diagnosis/result.html', context)
+
+
+def retry_survey(request, result_id):
+    result = get_object_or_404(Result, id=result_id)
+    email = result.user_email
+    # 기존 설문 삭제
+    result.delete()
+    # 설문 시작 페이지로 이동 (이메일을 쿼리 파라미터로 전달)
+    return redirect(f"{reverse('diagnosis:survey_start')}?email={email}")
 
 
 def contact_view(request):
@@ -241,146 +242,6 @@ def contact_view(request):
 
     else: # Handle GET requests
         return render(request, 'diagnosis/contact.html', context)
-
-def result(request, result_id):
-    """Fetches result from Django DB and renders the result page."""
-    # 사용자 언어 감지
-    user_language = detect_user_language(request)
-    set_language(request, user_language)
-    
-    # This view now handles displaying the result and the email input form.
-    # Firebase is not used, so only fetch from Django DB.
-
-    try:
-        # Ensure result_id is a valid UUID before querying Django DB and fetch the result
-        uuid_result_id = uuid.UUID(result_id) # Validate and convert to UUID object
-        # Fetch the result object or return 404 if not found
-        django_result = get_object_or_404(Result, id=uuid_result_id)
-
-        print(f"Result ID {result_id} found in Django DB.")
-
-        # Populate data from Django DB object
-        final_type = django_result.final_type_axis.code if django_result.final_type_axis else "Unknown" # Get code from linked Axis
-        scores = json.loads(django_result.scores_json) if django_result.scores_json else {} # Explicitly load JSON and handle potential None
-        user_email = django_result.user_email
-        
-        # Extract the part before '@' from the email, if it exists
-        user_id = ""
-        if user_email and '@' in user_email:
-            user_id = user_email.split('@')[0]
-        
-        # --- Result type title and description ---
-        # Use the linked Axis object to get title and description
-        # Access the linked Axis model through the final_type_axis foreign key
-        type_title = django_result.final_type_axis.name #.split('(')[0] # Use axis name
-        # type_subtitle = django_result.final_type_axis.name.split('(')[1].split(')')[0] # Use axis code for subtitle
-        type_description = django_result.final_type_axis.description  #.split('한마디로')[0] # Use the description from the Axis model
-        # type_one_sentence = django_result.final_type_axis.description.split('"')[1].split('"')[0]
-        work_style = django_result.final_type_axis.work_style
-        work_condition = django_result.final_type_axis.work_condition
-        work_develop = django_result.final_type_axis.work_develop
-        work_communication = django_result.final_type_axis.work_communication
-        # Fetch Axis names and details for chart labels from Django Model
-
-        # Define axis labels for the chart
-        if user_language == 'en':
-            axis_labels = {
-                'PI': {'left': 'Adaptive', 'right': 'Planner'},
-                'DN': {'left': 'Data-driven', 'right': 'Intuitive'},
-                'CH': {'left': 'Clarifier', 'right': 'Harmonizer'},
-                'TR': {'left': 'Task-focused', 'right': 'Relationship-focused'},
-            }
-        else:
-            axis_labels = {
-                'PI': {'left': '적응형', 'right': '계획형'},
-                'DN': {'left': '데이터 기반', 'right': '직관 기반'},
-                'CH': {'left': '명료화형', 'right': '조화형'},
-                'TR': {'left': '성과 중심', 'right': '관계 중심'},
-            }
-        axis_data = {}
-
-        # Work Process (P vs I)
-        p_score = scores.get('P', 0)
-        i_score = scores.get('I', 0)
-        total_pi = p_score + i_score
-        p_percentage = (p_score / total_pi) * 100 if total_pi > 0 else 50
-        dominant_pi_type = '계획형' if p_score >= i_score else '적응형' if user_language == 'ko' else 'Planner' if p_score >= i_score else 'Adaptive'
-        dominant_pi_percentage = p_percentage if p_score >= i_score else 100 - p_percentage
-        axis_data['PI'] = {'dominant_type': dominant_pi_type, 'percentage': round(dominant_pi_percentage), 'i_percentage': 100-round(p_percentage)}
-
-        # Decision-Making (D vs N)
-        d_score = scores.get('D', 0)
-        n_score = scores.get('N', 0)
-        total_dn = d_score + n_score
-        d_percentage = (d_score / total_dn) * 100 if total_dn > 0 else 50
-        dominant_dn_type = '데이터 기반' if d_score >= n_score else '직관 기반' if user_language == 'ko' else 'Data-driven' if d_score >= n_score else 'Intuitive'
-        dominant_dn_percentage = d_percentage if d_score >= n_score else 100 - d_percentage
-        axis_data['DN'] = {'dominant_type': dominant_dn_type, 'percentage': round(dominant_dn_percentage), 'n_percentage': 100-round(d_percentage)}
-
-        # Communication Orientation (C vs H)
-        c_score = scores.get('C', 0)
-        h_score = scores.get('H', 0)
-        total_ch = c_score + h_score
-        c_percentage = (c_score / total_ch) * 100 if total_ch > 0 else 50
-        dominant_ch_type = '명료화형' if c_score >= h_score else '조화형' if user_language == 'ko' else 'Clarifier' if c_score >= h_score else 'Harmonizer'
-        dominant_ch_percentage = c_percentage if c_score >= h_score else 100 - c_percentage
-        axis_data['CH'] = {'dominant_type': dominant_ch_type, 'percentage': round(dominant_ch_percentage), 'h_percentage': 100-round(c_percentage)}
-
-        # Work Motivation (T vs R)
-        t_score = scores.get('T', 0)
-        r_score = scores.get('R', 0)
-        total_tr = t_score + r_score
-        t_percentage = (t_score / total_tr) * 100 if total_tr > 0 else 50
-        dominant_tr_type = '성과 중심' if t_score >= r_score else '관계 중심' if user_language == 'ko' else 'Task-focused' if t_score >= r_score else 'Relationship-focused'
-        dominant_tr_percentage = t_percentage if t_score >= r_score else 100 - t_percentage
-        axis_data['TR'] = {'dominant_type': dominant_tr_type, 'percentage': round(dominant_tr_percentage), 'r_percentage': 100-round(t_percentage)}
-
-        print(f"Calculated axis data: {axis_data}") # Log the calculated data
-
-        # Prepare the context dictionary to pass data to the template
-        # Prepare the context dictionary to pass data to the template
-        context = {
-            'result_id': result_id,
-            'final_type': final_type, # Passed to template
-            'type_title': type_title, # Passed to template (from ResultTypeInfo or placeholder)
-            # 'type_subtitle': type_subtitle, # Passed to template
-            'type_description': type_description, # Passed to template (from ResultTypeInfo or placeholder)
-            # 'type_one_sentence' : type_one_sentence,
-            'scores': scores, # Pass raw scores as JSON string
-            'axis_labels': json.dumps(axis_labels), # Pass chart labels as JSON string
-            'user_id': user_id, # Pass the extracted user ID
-            'work_style': work_style, # Add work_style
-            'work_condition': work_condition, # Add work_condition
-            'work_develop': work_develop, # Add work_develop
-            'work_communication': work_communication, # Add work_communication
-            'axis_data':axis_data,
-            'current_language': user_language,
-            'language_name': get_language_name(user_language),
-        }
-
-        # Render the result template with the context data
-        return render(request, 'diagnosis/result.html', context)
-
-    except ValueError:
-         # Handle case where the result_id from the URL is not a valid UUID format
-         print(f"Invalid UUID format for result_id: {result_id}")
-         message = 'Result not found or invalid format.' if user_language == 'en' else '결과를 찾을 수 없거나 형식이 잘못되었습니다.'
-         return render(request, 'diagnosis/404.html', {
-             'message': message,
-             'current_language': user_language,
-             'language_name': get_language_name(user_language),
-         }, status=404)
-
-    except Exception as e:
-        # Catch any other unexpected errors during the view execution
-        print(f"Error in result view for ID {result_id}: {e}")
-        # In production, log the error properly
-        message = 'An internal server error occurred while fetching the result.' if user_language == 'en' else '결과를 가져오는 중 내부 서버 오류가 발생했습니다.'
-        return render(request, 'diagnosis/error.html', {
-            'message': message,
-            'current_language': user_language,
-            'language_name': get_language_name(user_language),
-        }, status=500)
 
 @require_POST
 def request_report(request):
