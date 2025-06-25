@@ -46,11 +46,9 @@
                     {{ user_id }}님의 업무 정체성 유형은?
                 {% endif %}
             </h3>
-            <h1><strong>{{ final_type }}</strong></h1>
-            <h4>{{ type_title }}</h4>
-            <p>({{ type_subtitle }})</p>
-            <p>{{ type_description }}</p>
-            <p><strong>{{type_one_sentence}}</strong></p>
+            <h1><strong>{{ final_type|linebreaksbr }}</strong></h1>
+            <h4>{{ type_title|linebreaksbr }}</h4>
+            <p>{{ type_description|linebreaksbr }}</p>
         </div>
 
         <!-- Diagnosis Results Visualization Section -->
