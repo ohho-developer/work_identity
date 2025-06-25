@@ -1,0 +1,61 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: ohho.developer/work-identity
+          stage: main
+          yaml: >
+            name: work-identity
+
+            app: python@3.11
+
+            options:
+              env:
+                - name: DJANGO_SECRET
+                  value: django-insecure-kat=b6d3=1b&4jqz10fl^^=lm4j=yfup(cfuakyvei+q2fl*7%
+                - name: EMAIL_HOST
+                  value: smtp.naver.com
+                - name: EMAIL_PORT
+                  value: "587"
+                - name: EMAIL_USE_TLS
+                  value: "True"
+                - name: EMAIL_HOST_USER
+                  value: designusplus@naver.com
+                - name: EMAIL_HOST_PASSWORD
+                  value: Rngh20160816!!
+                - name: DEBUG
+                  value: "True"
+                - name: DB_NAME
+                  value: postgres
+                - name: DB_USER
+                  value: root
+                - name: DB_PASSWORD
+                  value: Rngh20160816!
+                - name: DB_HOST
+                  value: svc.sel4.cloudtype.app
+                - name: DB_PORT
+                  value: "30159"
+              ports: 8000
+              start: python3 manage.py runserver 0:8000
+              buildenv: []
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
+              preset: python-django
