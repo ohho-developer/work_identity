@@ -40,7 +40,7 @@ jobs:
                 - name: EMAIL_HOST_PASSWORD
                   value: Rngh20160816!!
                 - name: DEBUG
-                  value: "True"
+                  value: "False"
                 - name: DB_NAME
                   value: postgres
                 - name: DB_USER
